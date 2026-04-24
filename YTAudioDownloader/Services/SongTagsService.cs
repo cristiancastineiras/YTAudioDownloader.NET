@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using YTAudioDownloader.Configuration;
 using YTAudioDownloader.Models;
 
 namespace YTAudioDownloader.Services;
@@ -14,9 +15,11 @@ public sealed class SongTagsService
 {
     private static readonly Regex ParenthesizedTextRegex = new(@"\s*\([^)]*\)", RegexOptions.Compiled);
     private readonly HttpClient _httpClient;
+    private readonly ApiEndpointsOptions _apiEndpoints;
 
     public SongTagsService(HttpClient? httpClient = null)
     {
+        _apiEndpoints = AppConfiguration.Endpoints;
         _httpClient = httpClient ?? new HttpClient();
     }
 
@@ -33,7 +36,7 @@ public sealed class SongTagsService
             throw new InvalidOperationException("El termino de busqueda quedo vacio tras limpiar parentesis.");
         }
 
-        var uriBuilder = new UriBuilder("https://itunes.apple.com/search");
+        var uriBuilder = new UriBuilder(_apiEndpoints.ItunesSearchUrl);
         var query = $"media=music&term={WebUtility.UrlEncode(cleanTerm)}";
         uriBuilder.Query = query;
 

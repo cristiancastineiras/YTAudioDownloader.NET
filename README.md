@@ -30,6 +30,28 @@ Esta pensada para ser rapida, simple y sin menus raros: pegas enlace, eliges car
 - .NET SDK 8.0 (si lo vas a compilar)
 - Conexion a internet
 
+## Configuracion de URLs (estandar .NET)
+
+Todas las URLs externas del proyecto estan centralizadas en:
+
+- YTAudioDownloader/appsettings.json
+
+Claves disponibles:
+
+- ExternalApis:MusicBrainzBaseUrl
+- ExternalApis:CoverArtArchiveBaseUrl
+- ExternalApis:ItunesSearchUrl
+- ExternalApis:YouTubeImageBaseUrl
+- ExternalApis:MusicBrainzUserAgent
+
+Tambien puedes sobreescribirlas por variables de entorno con prefijo:
+
+- YTAUDIODOWNLOADER_ExternalApis__MusicBrainzBaseUrl
+- YTAUDIODOWNLOADER_ExternalApis__CoverArtArchiveBaseUrl
+- YTAUDIODOWNLOADER_ExternalApis__ItunesSearchUrl
+- YTAUDIODOWNLOADER_ExternalApis__YouTubeImageBaseUrl
+- YTAUDIODOWNLOADER_ExternalApis__MusicBrainzUserAgent
+
 ## Ejecutar en local
 
 1. Clona el repositorio.

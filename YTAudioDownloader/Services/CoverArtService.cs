@@ -2,6 +2,7 @@ using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using YTAudioDownloader.Configuration;
 
 namespace YTAudioDownloader.Services;
 
@@ -11,10 +12,11 @@ namespace YTAudioDownloader.Services;
 public sealed class CoverArtService
 {
     private readonly HttpClient _httpClient;
-    private const string YouTubeImageBaseUrl = "https://img.youtube.com/vi";
+    private readonly ApiEndpointsOptions _apiEndpoints;
 
     public CoverArtService(HttpClient? httpClient = null)
     {
+        _apiEndpoints = AppConfiguration.Endpoints;
         _httpClient = httpClient ?? new HttpClient
         {
             Timeout = TimeSpan.FromSeconds(10)
@@ -41,7 +43,7 @@ public sealed class CoverArtService
         {
             try
             {
-                var imageUrl = $"{YouTubeImageBaseUrl}/{videoId}/{resolution}.jpg";
+                var imageUrl = $"{_apiEndpoints.YouTubeImageBaseUrl.TrimEnd('/')}/{videoId}/{resolution}.jpg";
                 var response = await _httpClient.GetAsync(imageUrl, cancellationToken);
 
                 if (response.IsSuccessStatusCode)

@@ -43,6 +43,15 @@ BundleArtifacts/
 *.tmp
 *.temp
 
+# Local environment/config files
+.env
+.env.*
+!.env.example
+appsettings.Development.json
+appsettings.Local.json
+**/appsettings.Development.json
+**/appsettings.Local.json
+
 # OS files
 .DS_Store
 Thumbs.db

@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using YTAudioDownloader.Configuration;
 using YTAudioDownloader.Models;
 
 namespace YTAudioDownloader.Services;
@@ -12,16 +13,17 @@ namespace YTAudioDownloader.Services;
 public sealed class MusicBrainzService
 {
     private readonly HttpClient _httpClient;
-    private const string BaseMbUrl = "https://musicbrainz.org/ws/2";
-    private const string CoverArtArchiveUrl = "https://coverartarchive.org";
+    private readonly ApiEndpointsOptions _apiEndpoints;
 
     public MusicBrainzService()
     {
+        _apiEndpoints = AppConfiguration.Endpoints;
+
         _httpClient = new HttpClient
         {
             Timeout = TimeSpan.FromSeconds(30)
         };
-        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("YTAudioDownloader/1.0 (Windows; +https://github.com)");
+        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(_apiEndpoints.MusicBrainzUserAgent);
     }
 
     public async Task<SongTagsData> SearchAsync(string searchTerm, CancellationToken cancellationToken = default)
@@ -35,7 +37,7 @@ public sealed class MusicBrainzService
         {
             var cleanTerm = searchTerm.Trim();
             var query = Uri.EscapeDataString(cleanTerm);
-            var searchUrl = $"{BaseMbUrl}/recording?query=recording:{query}&fmt=json&limit=5";
+            var searchUrl = $"{_apiEndpoints.MusicBrainzBaseUrl.TrimEnd('/')}/recording?query=recording:{query}&fmt=json&limit=5";
 
             var response = await _httpClient.GetAsync(searchUrl, cancellationToken);
             response.EnsureSuccessStatusCode();
@@ -89,7 +91,7 @@ public sealed class MusicBrainzService
     {
         try
         {
-            var coverUrl = $"{CoverArtArchiveUrl}/release/{albumMbid}/front-500";
+            var coverUrl = $"{_apiEndpoints.CoverArtArchiveBaseUrl.TrimEnd('/')}/release/{albumMbid}/front-500";
             var response = await _httpClient.GetAsync(coverUrl, cancellationToken);
 
             if (response.IsSuccessStatusCode)
