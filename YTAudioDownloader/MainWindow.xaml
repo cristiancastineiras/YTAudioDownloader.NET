@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="YTAudioDownloader.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:YTAudioDownloader"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="YTAudioDownloader">
+
+    <Grid RequestedTheme="Light">
+        <Grid.Background>
+            <SolidColorBrush Color="#FFF6F8FA" />
+        </Grid.Background>
+
+        <Grid.Resources>
+            <Style TargetType="TextBox">
+                <Setter Property="CornerRadius" Value="6" />
+                <Setter Property="BorderBrush" Value="#FFD0D7DE" />
+                <Setter Property="Background" Value="#FFFFFFFF" />
+                <Setter Property="Foreground" Value="#FF24292F" />
+                <Setter Property="PlaceholderForeground" Value="#FF8C959F" />
+            </Style>
+            <Style TargetType="ComboBox">
+                <Setter Property="CornerRadius" Value="6" />
+                <Setter Property="Background" Value="#FFFFFFFF" />
+                <Setter Property="BorderBrush" Value="#FFD0D7DE" />
+                <Setter Property="Foreground" Value="#FF24292F" />
+            </Style>
+            <Style TargetType="Button">
+                <Setter Property="CornerRadius" Value="6" />
+            </Style>
+            <Style TargetType="ListView">
+                <Setter Property="Foreground" Value="#FF57606A" />
+                <Setter Property="Background" Value="#FFFFFFFF" />
+                <Setter Property="BorderBrush" Value="#FFD0D7DE" />
+                <Setter Property="BorderThickness" Value="1" />
+            </Style>
+        </Grid.Resources>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LayoutStates">
+                <VisualState x:Name="WideLayout">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1200" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentGrid.(Grid.ColumnDefinitions)[0].Width" Value="2*" />
+                        <Setter Target="ContentGrid.(Grid.ColumnDefinitions)[1].Width" Value="*" />
+                        <Setter Target="ActivityBorder.Height" Value="420" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="NarrowLayout">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ContentGrid.(Grid.ColumnDefinitions)[0].Width" Value="*" />
+                        <Setter Target="ContentGrid.(Grid.ColumnDefinitions)[1].Width" Value="*" />
+                        <Setter Target="ActivityBorder.Height" Value="300" />
+                        <Setter Target="ContentGrid.(Grid.RowDefinitions)[1].Height" Value="Auto" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Background="#FFFFFFFF" BorderBrush="#FFD0D7DE" BorderThickness="0,0,0,1" Padding="24,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Spacing="4">
+                    <TextBlock x:Name="TitleBlock" FontSize="24" FontWeight="SemiBold" Foreground="#FF24292F" />
+                    <TextBlock x:Name="SubtitleBlock" Foreground="#FF57606A" />
+                </StackPanel>
+                <ComboBox Grid.Column="1" x:Name="LanguageComboBox" SelectedIndex="0" Width="120" SelectionChanged="OnLanguageChanged">
+                    <ComboBoxItem Content="Español" />
+                    <ComboBoxItem Content="English" />
+                </ComboBox>
+            </Grid>
+        </Border>
+
+        <!-- Content -->
+        <Grid x:Name="ContentGrid" Grid.Row="1" Margin="24,24,24,24" ColumnSpacing="24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Input Form -->
+            <Border Padding="20" CornerRadius="12" Background="#FFFFFFFF" BorderBrush="#FFD0D7DE" BorderThickness="1">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Spacing="12">
+                        <TextBlock x:Name="YouTubeUrlLabel" FontWeight="SemiBold" Foreground="#FF24292F" />
+                        <TextBox x:Name="VideoUrlTextBox" />
+
+                        <TextBlock x:Name="OutputFolderLabel" FontWeight="SemiBold" Foreground="#FF24292F" />
+                        <Grid ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="OutputFolderTextBox" />
+                            <Button Grid.Column="1" x:Name="BrowseButton" Click="OnBrowseFolderClick" BorderBrush="#FFD0D7DE" Background="#FFF6F8FA" Foreground="#FF24292F" />
+                        </Grid>
+
+                        <TextBlock x:Name="FormatLabel" FontWeight="SemiBold" Foreground="#FF24292F" />
+                        <ComboBox x:Name="FormatComboBox" SelectedIndex="0">
+                            <ComboBoxItem Content="MP3 (compatible)" />
+                            <ComboBoxItem Content="AAC (mejor que MP3)" />
+                            <ComboBoxItem Content="Opus (muy moderno)" />
+                            <ComboBoxItem Content="FLAC (sin pérdida)" />
+                            <ComboBoxItem Content="WAV (bruto, enorme)" />
+                        </ComboBox>
+
+                        <TextBlock Text="Calidad de audio" FontWeight="SemiBold" Foreground="#FF24292F" />
+                        <ComboBox x:Name="QualityComboBox" SelectedIndex="1">
+                            <ComboBoxItem Content="128 kbps (mínimo)" />
+                            <ComboBoxItem Content="192 kbps (bien)" />
+                            <ComboBoxItem Content="256 kbps (muy bien)" />
+                            <ComboBoxItem Content="320 kbps (máximo)" />
+                        </ComboBox>
+
+                        <TextBlock x:Name="FormatNoteBlock" FontSize="11" Foreground="#FF57606A" />
+
+                        <Border Height="1" Background="#FFD8DEE4" Margin="0,4" />
+
+                        <ProgressBar x:Name="DownloadProgressBar" Minimum="0" Maximum="100" Value="0" Height="8" Foreground="#FF0969DA" />
+                        <TextBlock x:Name="StatusTextBlock" Foreground="#FF0969DA" TextWrapping="WrapWholeWords" />
+
+                        <Grid ColumnSpacing="8" Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Button x:Name="DownloadButton" Click="OnDownloadClick" Background="#FF1F883D" Foreground="White" BorderBrush="#FF1A7F37" Padding="16,8" />
+                            <Button x:Name="CancelButton" Grid.Column="1" Click="OnCancelClick" IsEnabled="False" Background="#FFFFFFFF" BorderBrush="#FFD0D7DE" Foreground="#FF24292F" Padding="16,8" />
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Activity Log -->
+            <Border x:Name="ActivityBorder" Grid.Column="1" Padding="16" CornerRadius="12" Background="#FFFFFFFF" BorderBrush="#FFD0D7DE" BorderThickness="1">
+                <StackPanel Spacing="10">
+                    <TextBlock x:Name="ActivityLabel" FontWeight="SemiBold" Foreground="#FF24292F" />
+                    <ListView x:Name="LogListView" SelectionMode="None" IsItemClickEnabled="False" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" TextWrapping="WrapWholeWords" Foreground="#FF57606A" FontSize="12" />
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Footer -->
+        <TextBlock Grid.Row="2" x:Name="FooterBlock" Margin="24,0,24,18" Foreground="#FF656D76" />
+    </Grid>
+</Window>
