@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="YTAudioDownloader.Pages.QueuePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:YTAudioDownloader.Models"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <Grid Padding="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,20">
+            <TextBlock x:Name="TitleBlock" Text="Cola de Descargas" FontSize="22" FontWeight="Bold" Foreground="#FF24292F"/>
+            <TextBlock x:Name="SubtitleBlock" FontSize="13" Foreground="#FF57606A"/>
+        </StackPanel>
+
+        <!-- Active Downloads header -->
+        <StackPanel x:Name="ActiveHeader" Grid.Row="1" Orientation="Horizontal" Spacing="8"
+                    Margin="0,0,0,10" Visibility="Collapsed">
+            <Ellipse Width="8" Height="8" Fill="#FF0969DA" VerticalAlignment="Center"/>
+            <TextBlock Text="Descargas Activas" FontSize="13" FontWeight="SemiBold" Foreground="#FF24292F"
+                       VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- Downloads list (scrollable) -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="0">
+                <!-- Active Downloads -->
+                <ItemsControl x:Name="ActiveList" Margin="0,0,0,16">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="models:DownloadQueueItem">
+                            <Border Margin="0,0,0,6" Background="White" BorderBrush="#FFD0D7DE"
+                                    BorderThickness="1" CornerRadius="8" Padding="14,12">
+                                <StackPanel Spacing="10">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Thumbnail -->
+                                        <Border Width="46" Height="46" CornerRadius="6" Background="#FFEAEEF2"
+                                                Margin="0,0,12,0">
+                                            <FontIcon Glyph="&#xE8D6;" FontSize="20" Foreground="#FF57606A"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+
+                                        <!-- Info -->
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                                <TextBlock Text="{x:Bind Title, Mode=OneWay}"
+                                                           FontWeight="Medium" FontSize="13"
+                                                           Foreground="#FF24292F"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           MaxWidth="300"/>
+                                                <Border CornerRadius="4" Background="#FFEAEEF2" Padding="5,1">
+                                                    <TextBlock Text="{x:Bind Format, Mode=OneWay}"
+                                                               FontSize="10" FontWeight="Medium"
+                                                               Foreground="#FF57606A"/>
+                                                </Border>
+                                            </StackPanel>
+                                            <TextBlock Text="{x:Bind Artist, Mode=OneWay}"
+                                                       FontSize="12" Foreground="#FF57606A"
+                                                       TextTrimming="CharacterEllipsis" MaxWidth="280"/>
+                                        </StackPanel>
+
+                                        <!-- Status Badge -->
+                                        <Border Grid.Column="2" CornerRadius="12"
+                                                Background="{x:Bind StatusBadgeBg, Mode=OneWay}"
+                                                Padding="8,4" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                                <ProgressRing Width="12" Height="12"
+                                                              IsActive="{x:Bind IsSpinning, Mode=OneWay}"
+                                                              Foreground="{x:Bind StatusBadgeFg, Mode=OneWay}"
+                                                              Visibility="{x:Bind ProgressVisibility, Mode=OneWay}"/>
+                                                <TextBlock Text="{x:Bind StatusLabel, Mode=OneWay}"
+                                                           FontSize="11" FontWeight="Medium"
+                                                           Foreground="{x:Bind StatusBadgeFg, Mode=OneWay}"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Progress bar (only for active) -->
+                                    <ProgressBar Value="{x:Bind Progress, Mode=OneWay}"
+                                                 Minimum="0" Maximum="100" Height="5"
+                                                 CornerRadius="3"
+                                                 Foreground="#FF0969DA" Background="#FFEAEEF2"
+                                                 Visibility="{x:Bind ProgressVisibility, Mode=OneWay}"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Completed header -->
+                <TextBlock x:Name="CompletedHeader" Text="Completadas" FontSize="13"
+                           FontWeight="SemiBold" Foreground="#FF24292F"
+                           Margin="0,0,0,10" Visibility="Collapsed"/>
+
+                <!-- Completed Downloads -->
+                <ItemsControl x:Name="CompletedList">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="models:DownloadQueueItem">
+                            <Border Margin="0,0,0,6" Background="White" BorderBrush="#FFD0D7DE"
+                                    BorderThickness="1" CornerRadius="8" Padding="14,12">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Thumbnail -->
+                                    <Border Width="46" Height="46" CornerRadius="6" Background="#FFEAEEF2"
+                                            Margin="0,0,12,0">
+                                        <FontIcon Glyph="&#xE8D6;" FontSize="20" Foreground="#FF57606A"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <!-- Info -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <TextBlock Text="{x:Bind Title, Mode=OneWay}"
+                                                       FontWeight="Medium" FontSize="13"
+                                                       Foreground="#FF24292F"
+                                                       TextTrimming="CharacterEllipsis" MaxWidth="300"/>
+                                            <Border CornerRadius="4" Background="#FFEAEEF2" Padding="5,1">
+                                                <TextBlock Text="{x:Bind Format, Mode=OneWay}"
+                                                           FontSize="10" FontWeight="Medium"
+                                                           Foreground="#FF57606A"/>
+                                            </Border>
+                                        </StackPanel>
+                                        <TextBlock Text="{x:Bind Artist, Mode=OneWay}"
+                                                   FontSize="12" Foreground="#FF57606A"
+                                                   TextTrimming="CharacterEllipsis" MaxWidth="280"/>
+                                    </StackPanel>
+
+                                    <!-- Duration -->
+                                    <TextBlock Grid.Column="2" Text="{x:Bind Duration, Mode=OneWay}"
+                                               FontSize="12" Foreground="#FF57606A"
+                                               VerticalAlignment="Center" Margin="12,0"/>
+
+                                    <!-- Status Badge -->
+                                    <Border Grid.Column="3" CornerRadius="12"
+                                            Background="{x:Bind StatusBadgeBg, Mode=OneWay}"
+                                            Padding="8,4" VerticalAlignment="Center">
+                                        <TextBlock Text="{x:Bind StatusLabel, Mode=OneWay}"
+                                                   FontSize="11" FontWeight="Medium"
+                                                   Foreground="{x:Bind StatusBadgeFg, Mode=OneWay}"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- Empty state -->
+                <StackPanel x:Name="EmptyState" Visibility="Visible"
+                            HorizontalAlignment="Center" Margin="0,60,0,0" Spacing="12">
+                    <Border Width="64" Height="64" CornerRadius="32" Background="#FFEAEEF2"
+                            HorizontalAlignment="Center">
+                        <FontIcon Glyph="&#xE8D6;" FontSize="32" Foreground="#FF57606A"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Spacing="4" HorizontalAlignment="Center">
+                        <TextBlock Text="No hay descargas" FontWeight="Medium" FontSize="14"
+                                   Foreground="#FF24292F" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Las descargas aparecerán aquí" FontSize="13"
+                                   Foreground="#FF57606A" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>
