@@ -1,10 +1,8 @@
 {
   "profiles": {
-    "YTAudioDownloader (Package)": {
-      "commandName": "MsixPackage"
-    },
-    "YTAudioDownloader (Unpackaged)": {
-      "commandName": "Project"
+    "YTAudioDownloader": {
+      "commandName": "Project",
+      "nativeDebugging": false
     }
   }
 }

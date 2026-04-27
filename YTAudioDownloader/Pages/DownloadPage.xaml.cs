@@ -20,6 +20,30 @@ public sealed partial class DownloadPage : Page
     public DownloadPage()
     {
         InitializeComponent();
+
+        // Initialize tab visibility and metadata grid after all controls are loaded
+        UpdateTabVisibility();
+        UpdateMetadataVisibility();
+    }
+
+    private void UpdateTabVisibility()
+    {
+        // Show formato tab by default
+        if (FormatoTabContent != null && MetadataTabContent != null && SalidaTabContent != null)
+        {
+            FormatoTabContent.Visibility = Visibility.Visible;
+            MetadataTabContent.Visibility = Visibility.Collapsed;
+            SalidaTabContent.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    private void UpdateMetadataVisibility()
+    {
+        // Update manual metadata grid visibility based on AutoMetadataSwitch
+        if (ManualMetadataGrid != null && AutoMetadataSwitch != null)
+        {
+            ManualMetadataGrid.Visibility = AutoMetadataSwitch.IsOn ? Visibility.Collapsed : Visibility.Visible;
+        }
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -130,17 +154,24 @@ public sealed partial class DownloadPage : Page
 
     private void OnTabChecked(object sender, RoutedEventArgs e)
     {
-        if (sender is RadioButton rb)
-        {
-            var tag = rb.Tag?.ToString();
-            FormatoTabContent.Visibility = tag == "formato" ? Visibility.Visible : Visibility.Collapsed;
-            MetadataTabContent.Visibility = tag == "metadata" ? Visibility.Visible : Visibility.Collapsed;
-            SalidaTabContent.Visibility = tag == "salida" ? Visibility.Visible : Visibility.Collapsed;
-        }
+        if (sender is not RadioButton rb) return;
+
+        // Check if controls are initialized (they might not be during XAML parsing)
+        if (FormatoTabContent == null || MetadataTabContent == null || SalidaTabContent == null)
+            return;
+
+        var tag = rb.Tag?.ToString();
+        FormatoTabContent.Visibility = tag == "formato" ? Visibility.Visible : Visibility.Collapsed;
+        MetadataTabContent.Visibility = tag == "metadata" ? Visibility.Visible : Visibility.Collapsed;
+        SalidaTabContent.Visibility = tag == "salida" ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void OnAutoMetadataToggled(object sender, RoutedEventArgs e)
     {
+        // Check if controls are initialized (they might not be during XAML parsing)
+        if (ManualMetadataGrid == null || AutoMetadataSwitch == null)
+            return;
+
         AppState.Instance.AutoMetadata = AutoMetadataSwitch.IsOn;
         ManualMetadataGrid.Visibility = AutoMetadataSwitch.IsOn ? Visibility.Collapsed : Visibility.Visible;
     }
